@@ -1,0 +1,19 @@
+# Snowflake connection configuration (OAuth)
+# Use ${ENV_VAR} syntax to reference environment variables
+snowflake:
+  account: ${SNOWFLAKE_ACCOUNT}
+  user: ${SNOWFLAKE_USER}
+  authenticator: oauth
+  token: ${SNOWFLAKE_OAUTH_TOKEN}
+  warehouse: ${SNOWFLAKE_WAREHOUSE}
+  database: ${SNOWFLAKE_DATABASE}
+  schema: ${SNOWFLAKE_SCHEMA}
+  role: ${SNOWFLAKE_ROLE}
+
+  # OAuth token refresh settings (optional)
+  # If your infrastructure provides a token endpoint, the client can
+  # fetch a fresh token automatically before connecting.
+  # token_endpoint: ${SNOWFLAKE_TOKEN_ENDPOINT}
+  # client_id: ${SNOWFLAKE_CLIENT_ID}
+  # client_secret: ${SNOWFLAKE_CLIENT_SECRET}
+  # scope: session:role:${SNOWFLAKE_ROLE}

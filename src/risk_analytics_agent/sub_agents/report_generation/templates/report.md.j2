@@ -1,0 +1,16 @@
+# {{ title }}
+
+*Generated: {{ generated_at }}*
+
+---
+
+{% for section_name, content in sections.items() %}
+## {{ section_name }}
+
+{{ content }}
+
+{% endfor %}
+
+---
+
+*Risk Analytics Agent — Generated {{ generated_at }}*

@@ -1,0 +1,30 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Generated reports
+output/
+
+# Config secrets (keep templates, ignore local overrides)
+config/snowflake.local.yaml
+config/models.local.yaml
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# env files (keep template, ignore local overrides)
+.env
+.env.*

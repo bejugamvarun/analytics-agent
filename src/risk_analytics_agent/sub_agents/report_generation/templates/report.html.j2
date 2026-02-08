@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 40px;
+            color: #333;
+            line-height: 1.6;
+        }
+        h1 { color: #1a3a5c; border-bottom: 3px solid #1a3a5c; padding-bottom: 10px; }
+        h2 { color: #2c5f8a; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 30px; }
+        h3 { color: #3a7ab5; }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        th { background-color: #1a3a5c; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .chart-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .chart-container img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .metadata {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+        }
+        .alert { background-color: #fff3cd; border: 1px solid #ffc107; padding: 12px; border-radius: 4px; margin: 10px 0; }
+        .alert-danger { background-color: #f8d7da; border-color: #f5c6cb; }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .badge-high { background-color: #dc3545; color: white; }
+        .badge-low { background-color: #ffc107; color: #333; }
+        @media print {
+            body { margin: 20px; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <p class="metadata">Generated: {{ generated_at }}</p>
+
+    {% for section_name, content in sections.items() %}
+    <section>
+        <h2>{{ section_name }}</h2>
+        {{ content }}
+    </section>
+    {% endfor %}
+
+    {% if charts %}
+    <section>
+        <h2>Charts</h2>
+        {% for chart in charts %}
+        <div class="chart-container">
+            <h3>{{ chart.title }}</h3>
+            <img src="data:image/png;base64,{{ chart.base64 }}" alt="{{ chart.title }}">
+        </div>
+        {% endfor %}
+    </section>
+    {% endif %}
+
+    <footer style="margin-top: 40px; padding-top: 10px; border-top: 1px solid #ddd; color: #999; font-size: 0.8em;">
+        Risk Analytics Agent &mdash; Generated {{ generated_at }}
+    </footer>
+</body>
+</html>

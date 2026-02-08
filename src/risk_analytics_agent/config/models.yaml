@@ -1,0 +1,46 @@
+# LLM model configuration
+# Supports on-prem hosted models via LiteLLM-compatible endpoints.
+# Set `provider` to match your deployment: "openai", "azure", "anthropic",
+# "vllm", "ollama", or any provider LiteLLM supports.
+#
+# `default` applies to every agent unless overridden under `agents`.
+# Per-agent entries inherit all default values — only specify the fields
+# you want to change (e.g. a different model_name or temperature).
+
+default:
+  provider: openai                   # LM Studio uses OpenAI-compatible API
+  model_name: unsloth/gpt-oss-20b            # Use the model name from LM Studio (can be anything)
+  api_base: http://localhost:1234/v1 # LM Studio default endpoint
+  api_key: lm-studio                 # Placeholder (LM Studio doesn't need a real key)
+  # provider: anthropic               # LiteLLM provider prefix
+  # model_name: claude-haiku-4-5
+  # api_base: ${LLM_API_BASE}      # Your on-prem endpoint URL
+  # api_key: ${LLM_API_KEY}        # API key for the endpoint
+  # temperature: 0.0
+  # max_tokens: 8192
+  # timeout: 120
+  # custom_llm_provider: anthropic
+
+# Per-agent overrides (uncomment / add as needed).
+# Any key not specified here falls back to the default above.
+agents:
+  # Example: use a larger model for the orchestrator
+  # orchestrator_agent:
+  #   model_name: claude-opus-4-6
+  #   max_tokens: 16384
+
+  # Example: use a fast, cheap model for schema discovery
+  # schema_discovery_agent:
+  #   provider: vllm
+  #   model_name: mistral-7b
+  #   api_base: https://vllm.internal.corp/v1
+
+  # Example: use a code-tuned model for data retrieval SQL generation
+  # data_retrieval_agent:
+  #   model_name: codestral-latest
+
+  # quantitative_analysis_agent:
+  # variance_analysis_agent:
+  # drilldown_analysis_agent:
+  # anomaly_detection_agent:
+  # report_generation_agent:

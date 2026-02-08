@@ -1,0 +1,11 @@
+# ADK Configuration
+# This file tells ADK where to find the root agent
+
+agent:
+  module: "risk_analytics_agent.agent"
+  name: "root_agent"
+
+app:
+  name: "risk_analytics_agent"
+  title: "Risk Analytics Agent"
+  description: "Google ADK multi-agent system for financial liquidity risk analytics"
