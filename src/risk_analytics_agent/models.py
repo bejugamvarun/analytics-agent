@@ -48,6 +48,16 @@ _LITELLM_EXTRA_KEYS = frozenset({
     "max_tokens",
     "timeout",
     "custom_llm_provider",
+    # Reasoning model parameters
+    "reasoning_effort",          # For o1 models: "low", "medium", "high"
+    "max_completion_tokens",     # For o1 models (replaces max_tokens)
+    "supports_reasoning",        # Flag for reasoning models
+    # Additional LiteLLM parameters
+    "top_p",
+    "frequency_penalty",
+    "presence_penalty",
+    "stop",
+    "stream",
 })
 
 
@@ -71,6 +81,7 @@ def _build_model(agent_name: str | None) -> LiteLlm:
 
     model_string = f"{provider}/{model_name}"
 
+    # Extract extra parameters for LiteLLM
     extra_kwargs = {
         k: v for k, v in merged.items()
         if k in _LITELLM_EXTRA_KEYS and v is not None

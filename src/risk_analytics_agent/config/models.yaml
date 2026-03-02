@@ -9,38 +9,87 @@
 
 default:
   provider: openai                   # LM Studio uses OpenAI-compatible API
-  model_name: unsloth/gpt-oss-20b            # Use the model name from LM Studio (can be anything)
+  model_name: openai/gpt-oss-20b    # Use the model name from LM Studio (can be anything)
   api_base: http://localhost:1234/v1 # LM Studio default endpoint
   api_key: lm-studio                 # Placeholder (LM Studio doesn't need a real key)
-  # provider: anthropic               # LiteLLM provider prefix
-  # model_name: claude-haiku-4-5
-  # api_base: ${LLM_API_BASE}      # Your on-prem endpoint URL
-  # api_key: ${LLM_API_KEY}        # API key for the endpoint
-  # temperature: 0.0
-  # max_tokens: 8192
+  temperature: 0.7                   # Temperature for non-reasoning models
+  max_tokens: 8192                   # Max output tokens
   # timeout: 120
-  # custom_llm_provider: anthropic
+  
+  # NOTE: Reasoning model parameters (reasoning_effort, supports_reasoning, etc.)
+  # should ONLY be added to specific agents that use reasoning models (o1, DeepSeek R1)
+  # Don't add them to default config unless all your models support reasoning!
+  
+  # Alternative providers (uncomment to use):
+  # provider: anthropic
+  # model_name: claude-haiku-4-5
+  # api_base: ${LLM_API_BASE}
+  # api_key: ${LLM_API_KEY}
 
 # Per-agent overrides (uncomment / add as needed).
 # Any key not specified here falls back to the default above.
 agents:
-  # Example: use a larger model for the orchestrator
+  # ============================================================================
+  # STANDARD MODEL EXAMPLE
+  # ============================================================================
   # orchestrator_agent:
   #   model_name: claude-opus-4-6
+  #   temperature: 0.7
   #   max_tokens: 16384
+  
+  # ============================================================================
+  # REASONING MODEL EXAMPLES (o1, DeepSeek R1, etc.)
+  # IMPORTANT: Only use reasoning parameters for actual reasoning models!
+  # ============================================================================
+  
+  # Example 1: OpenAI o1-preview (Best reasoning, highest cost)
+  # quantitative_analysis_agent:
+  #   provider: openai
+  #   model_name: o1-preview
+  #   reasoning_effort: high              # ONLY for o1 models
+  #   supports_reasoning: true            # Flags this as reasoning model
+  #   max_completion_tokens: 32768        # o1 uses this instead of max_tokens
+  #   api_key: ${OPENAI_API_KEY}
+  #   # NOTE: o1 models don't support temperature/top_p - auto-removed when supports_reasoning=true
 
-  # Example: use a fast, cheap model for schema discovery
+  # Example 2: OpenAI o1-mini (Fast reasoning, medium cost)
+  # variance_analysis_agent:
+  #   provider: openai
+  #   model_name: o1-mini
+  #   reasoning_effort: medium
+  #   supports_reasoning: true
+  #   max_completion_tokens: 16384
+  #   api_key: ${OPENAI_API_KEY}
+
+  # Example 3: DeepSeek R1 (Cost-effective reasoning)
+  # anomaly_detection_agent:
+  #   provider: openai
+  #   model_name: deepseek-reasoner
+  #   api_base: https://api.deepseek.com/v1
+  #   api_key: ${DEEPSEEK_API_KEY}
+  #   supports_reasoning: true            # Enables reasoning-specific handling
+  #   max_tokens: 8192
+  #   temperature: 0.7                    # DeepSeek supports temperature
+  
+  # ============================================================================
+  # OTHER EXAMPLES
+  # ============================================================================
+  
+  # Fast model for simple tasks
   # schema_discovery_agent:
+  #   provider: openai
+  #   model_name: gpt-4o-mini
+  #   temperature: 0.5
+  #   max_tokens: 4096
+
+  # Code-tuned model for SQL
+  # data_retrieval_agent:
+  #   model_name: codestral-latest
+  #   temperature: 0.3
+
+  # Local vLLM instance
+  # report_generation_agent:
   #   provider: vllm
   #   model_name: mistral-7b
   #   api_base: https://vllm.internal.corp/v1
-
-  # Example: use a code-tuned model for data retrieval SQL generation
-  # data_retrieval_agent:
-  #   model_name: codestral-latest
-
-  # quantitative_analysis_agent:
-  # variance_analysis_agent:
-  # drilldown_analysis_agent:
-  # anomaly_detection_agent:
-  # report_generation_agent:
+  #   api_key: your-key

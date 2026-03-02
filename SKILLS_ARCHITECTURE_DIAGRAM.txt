@@ -1,0 +1,176 @@
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                     GOOGLE ADK SKILLS ARCHITECTURE                          │
+│                      Risk Analytics Agent System                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+                              USER QUERY
+                                  │
+                                  ▼
+                    ┌─────────────────────────┐
+                    │  ORCHESTRATOR AGENT     │
+                    │  (Routes to sub-agents) │
+                    └─────────────────────────┘
+                                  │
+          ┌───────────────────────┼───────────────────────┐
+          │                       │                       │
+          ▼                       ▼                       ▼
+┌──────────────────────┐ ┌──────────────────────┐ ┌──────────────────────┐
+│ VARIANCE ANALYSIS    │ │ ANOMALY DETECTION    │ │ OTHER SUB-AGENTS     │
+│ AGENT                │ │ AGENT                │ │ (5 more)             │
+└──────────────────────┘ └──────────────────────┘ └──────────────────────┘
+          │                       │                       
+          │ uses                  │ uses                  
+          ▼                       ▼                       
+┌──────────────────────┐ ┌──────────────────────┐
+│  📚 MLO ANALYSIS     │ │  📚 ANOMALY          │
+│     SKILL            │ │     DETECTION SKILL  │
+├──────────────────────┤ ├──────────────────────┤
+│ L1: Metadata         │ │ L1: Metadata         │
+│  • Name              │ │  • Name              │
+│  • Description       │ │  • Description       │
+│  • Tags              │ │  • Tags              │
+├──────────────────────┤ ├──────────────────────┤
+│ L2: Instructions     │ │ L2: Instructions     │
+│  • Variance steps    │ │  • Z-score method    │
+│  • Thresholds        │ │  • IQR method        │
+│  • Hierarchies       │ │  • Time-series       │
+├──────────────────────┤ ├──────────────────────┤
+│ L3: Resources        │ │ L3: Resources        │
+│  📄 Formulas         │ │  📄 Statistical      │
+│  📄 Schema           │ │     methods          │
+│  📋 Templates        │ │  📋 Examples         │
+└──────────────────────┘ └──────────────────────┘
+          │                       │
+          │ when needed            │ when needed
+          ▼                       ▼
+┌──────────────────────┐ ┌──────────────────────┐
+│  🔧 FUNCTION TOOLS   │ │  🔧 FUNCTION TOOLS   │
+│  • compute_variance  │ │  • detect_zscore     │
+│  • execute_sql       │ │  • detect_iqr        │
+│  • get_timeseries    │ │  • summarize         │
+└──────────────────────┘ └──────────────────────┘
+          │                       │
+          └───────────┬───────────┘
+                      ▼
+              ┌──────────────┐
+              │  SNOWFLAKE   │
+              │  DATABASE    │
+              └──────────────┘
+
+════════════════════════════════════════════════════════════════════════════
+
+SKILLS LOADING SEQUENCE:
+
+1️⃣  Agent starts → All skill L1 (Metadata) loaded
+2️⃣  User asks "Calculate MLO variance..."
+3️⃣  Agent sees "MLO" → matches mlo_analysis skill description
+4️⃣  Skill L2 (Instructions) loaded into context
+5️⃣  Agent follows step-by-step instructions
+6️⃣  Agent needs formula details → L3 (References) loaded
+7️⃣  Agent executes tools with domain knowledge
+8️⃣  Returns formatted result per skill output spec
+
+════════════════════════════════════════════════════════════════════════════
+
+BENEFITS:
+
+┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐
+│ BEFORE SKILLS   │   │ AFTER SKILLS    │   │   ADVANTAGE     │
+├─────────────────┤   ├─────────────────┤   ├─────────────────┤
+│ • All formulas  │   │ • Brief prompt  │   │ ✅ 70% smaller  │
+│   in prompt     │   │ • Skills loaded │   │    prompts      │
+│ • 5000+ tokens  │   │   on-demand     │   │                 │
+│   always loaded │   │ • 500 tokens    │   │ ✅ Faster       │
+│                 │   │   baseline      │   │    responses    │
+├─────────────────┤   ├─────────────────┤   ├─────────────────┤
+│ • Duplicate     │   │ • Reusable      │   │ ✅ DRY          │
+│   knowledge     │   │   skills        │   │    principle    │
+├─────────────────┤   ├─────────────────┤   ├─────────────────┤
+│ • Hard to       │   │ • Edit .md      │   │ ✅ Easy updates │
+│   update        │   │   files         │   │                 │
+├─────────────────┤   ├─────────────────┤   ├─────────────────┤
+│ • Code mixed    │   │ • Separated     │   │ ✅ Clean        │
+│   with domain   │   │   concerns      │   │    architecture │
+└─────────────────┘   └─────────────────┘   └─────────────────┘
+
+════════════════════════════════════════════════════════════════════════════
+
+PROJECT STRUCTURE:
+
+risk_analytics_agent/
+│
+├── src/
+│   └── risk_analytics_agent/
+│       ├── orchestrator/
+│       │   └── agent.py ─────────── Routes to sub-agents
+│       │
+│       └── sub_agents/
+│           ├── variance_analysis/
+│           │   └── agent.py ──────── 🆕 Now uses mlo_analysis skill
+│           │
+│           └── anomaly_detection/
+│               └── agent.py ──────── 🆕 Now uses anomaly_detection skill
+│
+├── skills/                          🆕 NEW DIRECTORY
+│   ├── README.md ───────────────────── Full implementation guide
+│   ├── QUICKSTART.md ───────────────── Quick reference
+│   ├── test_skills.py ──────────────── Validation script
+│   │
+│   ├── mlo_analysis/                🆕 MLO Variance Analysis Skill
+│   │   ├── SKILL.md
+│   │   ├── references/
+│   │   │   └── mlo_calculations.md
+│   │   └── assets/
+│   │       └── mlo_schema.sql
+│   │
+│   ├── anomaly_detection/           🆕 Statistical Anomaly Detection Skill
+│   │   ├── SKILL.md
+│   │   └── references/
+│   │       └── statistical_methods.md
+│   │
+│   └── examples/
+│       └── inline_skills_example.py
+│
+├── SKILLS_IMPLEMENTATION.md         🆕 This summary document
+│
+└── pyproject.toml ──────────────────── 🔄 Updated: google-adk>=1.25.0
+
+════════════════════════════════════════════════════════════════════════════
+
+QUICK START:
+
+1. Install ADK 1.25.0+:
+   $ pip install --upgrade google-adk
+
+2. Verify Skills load correctly:
+   $ python skills/test_skills.py
+
+3. Run your agent:
+   $ adk run src/risk_analytics_agent/orchestrator/agent.py
+
+4. Try a query:
+   "Calculate MLO day-over-day variance for March 15th at entity level"
+
+════════════════════════════════════════════════════════════════════════════
+
+FUTURE SKILLS TO CREATE:
+
+┌─────────────────────────────┐
+│ 📊 LCR Calculation          │  Liquidity Coverage Ratio methodology
+├─────────────────────────────┤
+│ 📈 NSFR Reporting           │  Net Stable Funding Ratio rules
+├─────────────────────────────┤
+│ ✅ Data Quality Validation  │  Field-level validation rules
+├─────────────────────────────┤
+│ 🚨 Regulatory Thresholds    │  Compliance limits and triggers
+├─────────────────────────────┤
+│ 📅 Treasury Calendar        │  Business day calculations
+├─────────────────────────────┤
+│ 🔐 SQL Safety Validator     │  Query safety enforcement
+├─────────────────────────────┤
+│ 📄 Report Templates         │  Standard report formats
+└─────────────────────────────┘
+
+════════════════════════════════════════════════════════════════════════════
+```
