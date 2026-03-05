@@ -51,6 +51,12 @@ class SnowflakeClient:
         if self._config is None:
             self._config = load_snowflake_config()
         return self._config
+    
+    def _is_configured(self) -> bool:
+        """Check if Snowflake credentials are properly configured."""
+        cfg = self._get_config()
+        required_fields = ["account", "user"]
+        return all(cfg.get(field) and cfg[field].strip() for field in required_fields)
 
     def _resolve_token(self, cfg: dict) -> str:
         """Return an OAuth token, refreshing from the endpoint if configured."""
@@ -61,6 +67,16 @@ class SnowflakeClient:
 
     def _connect(self) -> snowflake.connector.SnowflakeConnection:
         cfg = self._get_config()
+        
+        # Check if we're in demo mode (no credentials configured)
+        if not self._is_configured():
+            raise ConnectionError(
+                "Snowflake credentials not configured. "
+                "Please set SNOWFLAKE_ACCOUNT, SNOWFLAKE_USER, and other required "
+                "environment variables, or use the mock tools for demo mode. "
+                "See DEMO_TOOLS_GUIDE.md for mock data usage."
+            )
+        
         token = self._resolve_token(cfg)
         logger.info("Connecting to Snowflake account=%s via OAuth", cfg.get("account"))
         conn = snowflake.connector.connect(
@@ -83,7 +99,17 @@ class SnowflakeClient:
         return self._connection
 
     def execute(self, sql: str, params: dict | None = None) -> list[dict]:
-        """Execute a SQL query and return results as a list of dicts."""
+        """Execute a SQL query and return results as a list of dicts.
+        
+        Raises:
+            ConnectionError: If Snowflake is not configured (demo mode)
+        """
+        if not self._is_configured():
+            raise ConnectionError(
+                "Snowflake not configured. Use mock tools instead: "
+                "generate_mock_liquidity_data, generate_variance_analysis, etc."
+            )
+        
         cursor = self.connection.cursor(snowflake.connector.DictCursor)
         try:
             cursor.execute(sql, params)

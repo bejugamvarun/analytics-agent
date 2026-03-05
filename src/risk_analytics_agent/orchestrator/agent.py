@@ -11,6 +11,13 @@ from risk_analytics_agent.sub_agents.data_retrieval.agent import data_retrieval_
 from risk_analytics_agent.sub_agents.drilldown_analysis.agent import (
     drilldown_analysis_agent,
 )
+from risk_analytics_agent.sub_agents.mock_tools import (
+    detect_mock_anomalies,
+    generate_mock_liquidity_data,
+    generate_mock_metrics,
+    generate_variance_analysis,
+    list_mock_schemas,
+)
 from risk_analytics_agent.sub_agents.quantitative_analysis.agent import (
     quantitative_analysis_agent,
 )
@@ -37,5 +44,13 @@ orchestrator_agent = LlmAgent(
         drilldown_analysis_agent,
         anomaly_detection_agent,
         report_generation_agent,
+    ],
+    # Demo/mock tools for when Snowflake is not available
+    tools=[
+        generate_mock_liquidity_data,
+        generate_variance_analysis,
+        detect_mock_anomalies,
+        generate_mock_metrics,
+        list_mock_schemas,
     ],
 )
